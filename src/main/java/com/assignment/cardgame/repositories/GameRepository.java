@@ -1,4 +1,4 @@
-package com.assignment.cardgame.services;
+package com.assignment.cardgame.repositories;
 
 import com.assignment.cardgame.models.Game;
 import org.springframework.data.repository.CrudRepository;
