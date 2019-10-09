@@ -1,8 +1,8 @@
 package com.assignment.cardgame.EndToEnd;
 
 import com.assignment.cardgame.controllers.DeckParameter;
-import com.assignment.cardgame.services.DeckDto;
-import com.assignment.cardgame.services.GameDto;
+import com.assignment.cardgame.services.Dtos.DeckDto;
+import com.assignment.cardgame.services.Dtos.GameDto;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +58,7 @@ public class GameControllerTests {
 
         // Then
         Assert.assertNotNull(game.id);
-        Assert.assertEquals(52, game.Cards.size());
+        Assert.assertEquals(52, game.cards.size());
     }
 
 //    @Test todo fix it

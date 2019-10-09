@@ -5,7 +5,7 @@ import com.assignment.cardgame.models.Game;
 import com.assignment.cardgame.repositories.DeckRepository;
 import com.assignment.cardgame.repositories.GameRepository;
 import com.assignment.cardgame.services.EntityNotFoundException;
-import com.assignment.cardgame.services.GameDto;
+import com.assignment.cardgame.services.Dtos.GameDto;
 import com.assignment.cardgame.services.GameManagementService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.xml.bind.ValidationException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -66,6 +67,17 @@ public class GameManagementServiceTests {
         Mockito.when(gameRepository.findById(game.getId())).thenReturn(Optional.of(game));
 
         GameDto gameDto = this.gameManagementService.AddDeckToGame(game.getId(), deck.getId());
-        Assert.assertEquals(gameDto.Cards.size(), deck.GetCards().size());
+        Assert.assertEquals(gameDto.cards.size(), deck.GetCards().size());
+    }
+
+    @Test()
+    public void testAddPlayer() throws EntityNotFoundException, ValidationException {
+        Game game = new Game();
+
+        Mockito.when(gameRepository.findById(game.getId())).thenReturn(Optional.of(game));
+
+        GameDto gameDto = this.gameManagementService.AddPlayerToGame(game.getId(), 1);
+        Assert.assertEquals(gameDto.players.size(), 1);
+        Assert.assertEquals(gameDto.players.get(0).getId(), 1);
     }
 }

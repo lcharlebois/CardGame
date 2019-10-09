@@ -1,24 +1,16 @@
 package com.assignment.cardgame.Integration.Controllers;
 
 import com.assignment.cardgame.controllers.GameController;
-import com.assignment.cardgame.models.CardDescriptor;
-import com.assignment.cardgame.models.Deck;
-import com.assignment.cardgame.services.DeckDto;
 import com.assignment.cardgame.services.EntityNotFoundException;
-import com.assignment.cardgame.services.GameDto;
+import com.assignment.cardgame.services.Dtos.GameDto;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
-import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

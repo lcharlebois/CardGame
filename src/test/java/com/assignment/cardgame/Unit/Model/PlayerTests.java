@@ -11,14 +11,14 @@ public class PlayerTests {
 
     @Test
     public void testCreatePlayer(){
-        Player player = new Player();
+        Player player = new Player(0);
         Assert.assertEquals(0, player.getId());
         Assert.assertNotNull(player);
     }
 
     @Test
-    public void testAddCards() {
-        Player player = new Player();
+    public void testAddAndGetCards() {
+        Player player = new Player(0);
         player.addCard(new CardDescriptor(Face.QUEEN, Suit.DIAMONDS));
         Assert.assertEquals(1, player.getPlayerCards().size());
         Assert.assertEquals("QUEEN of DIAMONDS", player.getPlayerCards().get(0).toString());

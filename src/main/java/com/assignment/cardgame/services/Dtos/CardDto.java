@@ -1,4 +1,4 @@
-package com.assignment.cardgame.services;
+package com.assignment.cardgame.services.Dtos;
 
 import com.assignment.cardgame.common.Face;
 import com.assignment.cardgame.common.Suit;

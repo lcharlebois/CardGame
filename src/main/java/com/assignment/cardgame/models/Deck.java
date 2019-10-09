@@ -6,6 +6,7 @@ import com.assignment.cardgame.common.Suit;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,6 +20,8 @@ public class Deck {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name="deckCards", joinColumns=@JoinColumn(name="deck_id"))
     List<Integer> Cards;
+
+    Optional<Integer> GameId;
 
     public Deck() {
         Cards = BuildCards(52);
@@ -36,6 +39,14 @@ public class Deck {
         }
 
         return cards;
+    }
+
+    public Optional<Integer> getGameId() {
+        return GameId;
+    }
+
+    public void setGameId(int gameId) {
+        GameId = Optional.of(gameId);
     }
 
     private List<Integer> BuildCards(int cardCount) {

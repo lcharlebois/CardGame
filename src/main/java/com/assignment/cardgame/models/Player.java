@@ -9,12 +9,22 @@ import java.util.stream.Collectors;
 @Entity
 public class Player {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
+    private int id;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name="playerCard", joinColumns=@JoinColumn(name="player_id"))
-    List<Card> Cards = new ArrayList();
+    private List<Card> Cards = new ArrayList();
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="gameId")
+    private Game game;
+
+    public Player(int id) {
+        this.id = id;
+    }
+
+    protected Player() {
+    }
 
     public int getId() {
         return id;

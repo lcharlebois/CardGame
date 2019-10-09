@@ -1,6 +1,6 @@
 package com.assignment.cardgame.EndToEnd;
 
-import com.assignment.cardgame.services.DeckDto;
+import com.assignment.cardgame.services.Dtos.DeckDto;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.http.ResponseEntity;

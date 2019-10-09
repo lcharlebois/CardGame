@@ -1,6 +1,6 @@
 package com.assignment.cardgame.controllers;
 
-import com.assignment.cardgame.services.GameDto;
+import com.assignment.cardgame.services.Dtos.GameDto;
 import com.assignment.cardgame.services.GameManagementService;
 import com.assignment.cardgame.services.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

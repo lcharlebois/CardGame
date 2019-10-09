@@ -42,6 +42,6 @@ public class DeckControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.hasSize(1)))
                 .andExpect(jsonPath("$[0].id", Matchers.is(deck.getId())))
-                .andExpect(jsonPath("$[0].Cards", Matchers.hasSize(52)));
+                .andExpect(jsonPath("$[0].cards", Matchers.hasSize(52)));
     }
 }

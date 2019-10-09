@@ -1,7 +1,7 @@
 package com.assignment.cardgame.Integration.Controllers;
 
 import com.assignment.cardgame.controllers.DeckController;
-import com.assignment.cardgame.services.DeckDto;
+import com.assignment.cardgame.services.Dtos.DeckDto;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

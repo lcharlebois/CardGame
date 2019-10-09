@@ -1,9 +1,8 @@
 package com.assignment.cardgame.controllers;
 
-import com.assignment.cardgame.models.CardDescriptor;
 import com.assignment.cardgame.models.Deck;
 import com.assignment.cardgame.repositories.DeckRepository;
-import com.assignment.cardgame.services.DeckDto;
+import com.assignment.cardgame.services.Dtos.DeckDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
