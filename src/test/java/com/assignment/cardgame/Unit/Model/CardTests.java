@@ -15,4 +15,20 @@ public class CardTests {
         Assert.assertEquals(Face.ACE, card.getFace());
         Assert.assertEquals(Suit.CLUBS, card.getSuit());
     }
+
+    @Test
+    public void testCreateCardFromValue(){
+        Card card = Card.fromCardValue(40);
+        Assert.assertNotNull(card);
+        Assert.assertEquals(Face.TWO, card.getFace());
+        Assert.assertEquals(Suit.HEARTS, card.getSuit());
+    }
+
+    @Test
+    public void testGetCardValue(){
+        Card card = new Card(Face.ACE, Suit.CLUBS);
+        int value = card.getCardValue();
+        Assert.assertNotNull(card);
+        Assert.assertEquals(13, value);
+    }
 }

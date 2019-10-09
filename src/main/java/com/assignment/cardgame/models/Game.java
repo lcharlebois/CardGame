@@ -62,11 +62,16 @@ public class Game {
     public SuitCounts getSuitCounts(){
         Map<Suit, List<Card>> groupedSuits = this.cards.stream().collect(Collectors.groupingBy(c -> c.getSuit()));
 
+        List<Card> hearts = groupedSuits.get(Suit.HEARTS) == null ? new ArrayList<Card>() : groupedSuits.get(Suit.HEARTS);
+        List<Card> spades = groupedSuits.get(Suit.SPADES) == null ? new ArrayList<Card>() : groupedSuits.get(Suit.SPADES);
+        List<Card> clubs = groupedSuits.get(Suit.CLUBS) == null ? new ArrayList<Card>() : groupedSuits.get(Suit.CLUBS);
+        List<Card> diamonds = groupedSuits.get(Suit.DIAMONDS) == null ? new ArrayList<Card>() : groupedSuits.get(Suit.DIAMONDS);
+
         return new SuitCounts(
-                groupedSuits.get(Suit.HEARTS).size(),
-                groupedSuits.get(Suit.SPADES).size(),
-                groupedSuits.get(Suit.CLUBS).size(),
-                groupedSuits.get(Suit.DIAMONDS).size());
+                hearts.size(),
+                spades.size(),
+                clubs.size(),
+                diamonds.size());
     }
 
     public List<CardCount> getSortedCardCount(){

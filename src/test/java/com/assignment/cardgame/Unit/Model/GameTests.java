@@ -91,18 +91,17 @@ public class GameTests {
         CardDescriptor card1 = new CardDescriptor(Face.ACE, Suit.SPADES);
         CardDescriptor card2 = new CardDescriptor(Face.JACK, Suit.SPADES);
         CardDescriptor card3 = new CardDescriptor(Face.EIGHT, Suit.HEARTS);
-        CardDescriptor card4 = new CardDescriptor(Face.NINE, Suit.CLUBS);
-        CardDescriptor card5 = new CardDescriptor(Face.QUEEN, Suit.DIAMONDS);
-        CardDescriptor card6 = new CardDescriptor(Face.KING, Suit.DIAMONDS);
+        CardDescriptor card4 = new CardDescriptor(Face.QUEEN, Suit.DIAMONDS);
+        CardDescriptor card5 = new CardDescriptor(Face.KING, Suit.DIAMONDS);
 
-        game.addToGameDeck(Arrays.asList(card1, card2, card3, card4, card5, card6));
+        game.addToGameDeck(Arrays.asList(card1, card2, card3, card4, card5));
 
         SuitCounts suitCounts = game.getSuitCounts();
 
         Assert.assertEquals(2, suitCounts.getSpadesCount());
         Assert.assertEquals(2, suitCounts.getSpadesCount());
         Assert.assertEquals(1, suitCounts.getHeartsCount());
-        Assert.assertEquals(1, suitCounts.getClubsCount());
+        Assert.assertEquals(0, suitCounts.getClubsCount());
     }
 
     @Test
@@ -163,6 +162,28 @@ public class GameTests {
     }
 
     @Test()
+    public void testGetSortedPLayerScores() throws ValidationException {
+        Game game = new Game();
+        int playerId1 = 1;
+        int playerId2 = 2;
+        CardDescriptor card1 = new CardDescriptor(Face.ACE, Suit.SPADES);
+        CardDescriptor card2 = new CardDescriptor(Face.TWO, Suit.SPADES);
+        CardDescriptor card3 = new CardDescriptor(Face.JACK, Suit.HEARTS);
+
+        game.addToGameDeck(Arrays.asList(card1, card2, card3));
+        game.addPlayer(new Player(playerId1));
+        game.addPlayer(new Player(playerId2));
+
+        game.dealCardToPlayer(playerId1, 3);
+        game.dealCardToPlayer(playerId2, 3);
+
+        List<PlayerValueDescriptor> sortedPlayerValues = game.getSortedPlayerValues();
+        Assert.assertTrue(sortedPlayerValues.get(0).getPlayerValue() > sortedPlayerValues.get(1).getPlayerValue());
+        Assert.assertEquals(this.GetPlayerScore(game, sortedPlayerValues.get(0).getPlayerId()), sortedPlayerValues.get(0).getPlayerValue());
+        Assert.assertEquals(this.GetPlayerScore(game, sortedPlayerValues.get(1).getPlayerId()), sortedPlayerValues.get(1).getPlayerValue());
+    }
+
+    @Test()
     public void testNoMoreCardToDealToPlayer() throws ValidationException {
         Game game = new Game();
         CardDescriptor card1 = new CardDescriptor(Face.ACE, Suit.SPADES);
@@ -192,5 +213,16 @@ public class GameTests {
         Assert.assertEquals(suit, sortedCardCount.get(index).getCardSuite());
         Assert.assertEquals(face, sortedCardCount.get(index).getCardFace());
         Assert.assertEquals(count, sortedCardCount.get(index).getCount());
+    }
+
+    private int GetPlayerScore(Game game, int playerId) throws ValidationException {
+        PlayerDescriptor player = game.getPlayer(playerId);
+
+        int score = 0;
+        for (CardDescriptor card : player.getCards()) {
+            score += (card.getFace().getValue() + 1);
+        }
+
+        return score;
     }
 }

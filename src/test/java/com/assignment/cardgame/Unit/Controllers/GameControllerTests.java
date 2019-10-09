@@ -6,6 +6,7 @@ import com.assignment.cardgame.controllers.GameController;
 import com.assignment.cardgame.services.Dtos.CardDto;
 import com.assignment.cardgame.services.Dtos.GameDto;
 import com.assignment.cardgame.services.Dtos.PlayerDto;
+import com.assignment.cardgame.services.EntityNotFoundException;
 import com.assignment.cardgame.services.GameManagementService;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.xml.bind.ValidationException;
 import java.util.Arrays;
 import java.util.List;
 

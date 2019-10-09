@@ -1,6 +1,9 @@
 package com.assignment.cardgame.Integration.Controllers;
 
 import com.assignment.cardgame.controllers.GameController;
+import com.assignment.cardgame.services.Dtos.CardCountDto;
+import com.assignment.cardgame.services.Dtos.CardsPerSuitDto;
+import com.assignment.cardgame.services.Dtos.PlayerValueDto;
 import com.assignment.cardgame.services.EntityNotFoundException;
 import com.assignment.cardgame.services.Dtos.GameDto;
 import org.junit.Assert;
@@ -10,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.xml.bind.ValidationException;
 import java.util.List;
+import java.util.Random;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -54,6 +59,53 @@ public class GameControllerTests {
         // Then
         List<GameDto> games = gameController.getAll();
         Assert.assertFalse(exists(games, createdGame.id));
+    }
+
+    @Test(expected = ValidationException.class)
+    public void testGetUnknownPlayerTrowsWhenGettingCards() throws EntityNotFoundException, ValidationException {
+        GameDto createdGame = gameController.create();
+
+        gameController.getPlayerCards(createdGame.id, 3);
+    }
+
+    @Test()
+    public void testDoesNotThrowWhenGettingCardAndDeckIsEmpty() throws EntityNotFoundException, ValidationException {
+        GameDto createdGame = gameController.create();
+
+        List<CardCountDto> cardCountDtos = gameController.getSortedCardCount(createdGame.id);
+        CardsPerSuitDto cardsPerStuits = gameController.getCardsPerStuits(createdGame.id);
+
+        Assert.assertEquals(0, cardCountDtos.size());
+        Assert.assertEquals(0, cardsPerStuits.getSpadesCount());
+        Assert.assertEquals(0, cardsPerStuits.getHeartsCount());
+        Assert.assertEquals(0, cardsPerStuits.getDiamondsCount());
+        Assert.assertEquals(0, cardsPerStuits.getClubsCount());
+    }
+
+    @Test()
+    public void testNoPlayerDoesNotThrowWhenGettingValues() throws EntityNotFoundException, ValidationException {
+        GameDto createdGame = gameController.create();
+
+        List<PlayerValueDto> playerValues = gameController.getPlayerValues(createdGame.id);
+        Assert.assertEquals(0, playerValues.size());
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void testUnknownGameWhenGettingPlayerCard() throws EntityNotFoundException, ValidationException {
+        Random random = new Random();
+        gameController.getPlayerCards(random.nextInt(99999), random.nextInt(99999));
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void testUnknownGameWhenCardCount() throws EntityNotFoundException, ValidationException {
+        Random random = new Random();
+        gameController.getSortedCardCount(random.nextInt(99999));
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    public void testUnknownGameWhenCardPerSuits() throws EntityNotFoundException, ValidationException {
+        Random random = new Random();
+        gameController.getCardsPerStuits(random.nextInt(99999));
     }
 
     private boolean exists(List<GameDto> games, int idToSearch){
