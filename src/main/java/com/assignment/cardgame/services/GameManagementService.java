@@ -67,6 +67,16 @@ public class GameManagementService {
 
         return this.MapGame(game);
     }
+//
+//    public GameDto DealCardToPlayer(int gameId, int playerId) throws EntityNotFoundException, ValidationException {
+//        Game game = getGame(gameId);
+//
+//        game.addPlayer(playerId);
+//
+//        this.gameRepository.save(game);
+//
+//        return this.MapGame(game);
+//    }
 
     private Game getGame(int gameId) throws EntityNotFoundException {
         Optional<Game> game = gameRepository.findById(gameId);

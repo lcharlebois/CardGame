@@ -1,10 +1,11 @@
 package com.assignment.cardgame.models;
 
+import com.assignment.cardgame.common.Suit;
+
 import javax.persistence.*;
 import javax.xml.bind.ValidationException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Entity
@@ -53,6 +54,34 @@ public class Game {
             int index = randomGenerator.nextInt(i + 1);
             this.swapCards(i, index);
         }
+    }
+
+    public SuitCounts getSuitCounts(){
+        Map<Suit, List<Card>> groupedSuits = this.cards.stream().collect(Collectors.groupingBy(c -> c.getSuit()));
+
+        return new SuitCounts(
+                groupedSuits.get(Suit.HEARTS).size(),
+                groupedSuits.get(Suit.SPADES).size(),
+                groupedSuits.get(Suit.CLUBS).size(),
+                groupedSuits.get(Suit.DIAMONDS).size());
+    }
+
+    public List<CardCount> getSortedCardCount(){
+        Map<Card, Long> cardCountMap = this.cards.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+        List<CardCount> cardCounts = new ArrayList();
+        for (Map.Entry<Card, Long> entry : cardCountMap.entrySet()) {
+            CardDescriptor cardDescriptor = this.MapCard(entry.getKey());
+            cardCounts.add(new CardCount(cardDescriptor, entry.getValue().intValue()));
+        }
+
+        Comparator<CardCount> comparator = Comparator.comparing(CardCount::getCardSuite)
+                .thenComparing(CardCount::getCardFace)
+                .reversed();
+
+        Collections.sort(cardCounts, comparator);
+
+        return cardCounts;
     }
 
     public List<PlayerDescriptor> getPlayerList() {

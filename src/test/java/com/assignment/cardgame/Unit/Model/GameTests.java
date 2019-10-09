@@ -2,9 +2,7 @@ package com.assignment.cardgame.Unit.Model;
 
 import com.assignment.cardgame.common.Face;
 import com.assignment.cardgame.common.Suit;
-import com.assignment.cardgame.models.CardDescriptor;
-import com.assignment.cardgame.models.Deck;
-import com.assignment.cardgame.models.Game;
+import com.assignment.cardgame.models.*;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -64,5 +62,71 @@ public class GameTests {
         CardDescriptor card = game.PickCard();
 
         Assert.assertNull(card);
+    }
+
+    @Test
+    public void testGetSuitsCount(){
+        Game game = new Game();
+        CardDescriptor card1 = new CardDescriptor(Face.ACE, Suit.SPADES);
+        CardDescriptor card2 = new CardDescriptor(Face.JACK, Suit.SPADES);
+        CardDescriptor card3 = new CardDescriptor(Face.EIGHT, Suit.HEARTS);
+        CardDescriptor card4 = new CardDescriptor(Face.NINE, Suit.CLUBS);
+        CardDescriptor card5 = new CardDescriptor(Face.QUEEN, Suit.DIAMONDS);
+        CardDescriptor card6 = new CardDescriptor(Face.KING, Suit.DIAMONDS);
+
+        game.addToGameDeck(Arrays.asList(card1, card2, card3, card4, card5, card6));
+
+        SuitCounts suitCounts = game.getSuitCounts();
+
+        Assert.assertEquals(2, suitCounts.getSpadesCount());
+        Assert.assertEquals(2, suitCounts.getSpadesCount());
+        Assert.assertEquals(1, suitCounts.getHeartsCount());
+        Assert.assertEquals(1, suitCounts.getClubsCount());
+    }
+
+    @Test
+    public void testGetSortedCardCount(){
+        Game game = new Game();
+        CardDescriptor card1 = new CardDescriptor(Face.ACE, Suit.SPADES);
+        CardDescriptor card2 = new CardDescriptor(Face.TWO, Suit.SPADES);
+        CardDescriptor card3 = new CardDescriptor(Face.JACK, Suit.SPADES);
+        CardDescriptor card4 = new CardDescriptor(Face.EIGHT, Suit.HEARTS);
+        CardDescriptor card5 = new CardDescriptor(Face.SEVEN, Suit.HEARTS);
+        CardDescriptor card6 = new CardDescriptor(Face.NINE, Suit.CLUBS);
+        CardDescriptor card7 = new CardDescriptor(Face.NINE, Suit.CLUBS);
+        CardDescriptor card8 = new CardDescriptor(Face.NINE, Suit.CLUBS);
+        CardDescriptor card9 = new CardDescriptor(Face.QUEEN, Suit.DIAMONDS);
+        CardDescriptor card10 = new CardDescriptor(Face.KING, Suit.DIAMONDS);
+
+        List<CardDescriptor> cardDescriptors = Arrays.asList(
+                card1,
+                card2,
+                card3,
+                card4,
+                card5,
+                card6,
+                card7,
+                card8,
+                card9,
+                card10);
+
+        game.addToGameDeck(cardDescriptors);
+
+        List<CardCount> sortedCardCount = game.getSortedCardCount();
+
+        ValidateOrder(sortedCardCount, 0, Suit.HEARTS, Face.EIGHT, 1);
+        ValidateOrder(sortedCardCount, 1, Suit.HEARTS, Face.SEVEN, 1);
+        ValidateOrder(sortedCardCount, 2, Suit.SPADES, Face.JACK, 1);
+        ValidateOrder(sortedCardCount, 3, Suit.SPADES, Face.TWO, 1);
+        ValidateOrder(sortedCardCount, 4, Suit.SPADES, Face.ACE, 1);
+        ValidateOrder(sortedCardCount, 5, Suit.CLUBS, Face.NINE, 3);
+        ValidateOrder(sortedCardCount, 6, Suit.DIAMONDS, Face.KING, 1);
+        ValidateOrder(sortedCardCount, 7, Suit.DIAMONDS, Face.QUEEN, 1);
+    }
+
+    private void ValidateOrder(List<CardCount> sortedCardCount, int index, Suit suit, Face face, int count) {
+        Assert.assertEquals(suit, sortedCardCount.get(index).getCardSuite());
+        Assert.assertEquals(face, sortedCardCount.get(index).getCardFace());
+        Assert.assertEquals(count, sortedCardCount.get(index).getCount());
     }
 }

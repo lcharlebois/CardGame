@@ -54,10 +54,9 @@ public class Deck {
     }
 
     private CardDescriptor BuildCard(int cardValue) {
-        int face = cardValue % 13;
-        int suit = cardValue / 13;
+        Card card = Card.fromCardValue(cardValue);
 
-        return new CardDescriptor(Face.from(face), Suit.from(suit));
+        return new CardDescriptor(card.face, card.suit);
     }
 }
 

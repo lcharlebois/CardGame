@@ -23,4 +23,13 @@ public class PlayerTests {
         Assert.assertEquals(1, player.getPlayerCards().size());
         Assert.assertEquals("QUEEN of DIAMONDS", player.getPlayerCards().get(0).toString());
     }
+
+    @Test
+    public void testTotalCardsValue() {
+        Player player = new Player(0);
+        player.addCard(new CardDescriptor(Face.ACE, Suit.DIAMONDS));
+        player.addCard(new CardDescriptor(Face.KING, Suit.DIAMONDS));
+
+        Assert.assertEquals(14, player.GetCardsValue());
+    }
 }

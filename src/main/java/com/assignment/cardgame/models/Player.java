@@ -41,6 +41,15 @@ public class Player {
         Cards.add(card);
     }
 
+    public int GetCardsValue(){
+        int cardsValue = 0;
+        for (Card card : this.Cards) {
+            cardsValue += (card.face.getValue() + 1);
+        }
+
+        return cardsValue;
+    }
+
     private CardDescriptor MapCards(Card card) {
         return new CardDescriptor(card.face, card.suit);
     }
