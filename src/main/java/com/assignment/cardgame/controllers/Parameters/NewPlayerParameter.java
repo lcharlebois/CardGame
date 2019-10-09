@@ -1,4 +1,4 @@
-package com.assignment.cardgame.controllers;
+package com.assignment.cardgame.controllers.Parameters;
 
 public class NewPlayerParameter {
     private int id;

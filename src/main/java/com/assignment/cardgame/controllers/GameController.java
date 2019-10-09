@@ -1,5 +1,8 @@
 package com.assignment.cardgame.controllers;
 
+import com.assignment.cardgame.controllers.Parameters.DealCardsParameter;
+import com.assignment.cardgame.controllers.Parameters.NewDeckParameter;
+import com.assignment.cardgame.controllers.Parameters.NewPlayerParameter;
 import com.assignment.cardgame.services.Dtos.*;
 import com.assignment.cardgame.services.GameManagementService;
 import com.assignment.cardgame.services.EntityNotFoundException;
@@ -51,7 +54,7 @@ public class GameController {
     }
 
     @PostMapping("/games/{id}/players")
-    public GameDto addPlayer(@PathVariable Integer id, @RequestBody NewPlayerParameter playerParameter) throws EntityNotFoundException {
+    public GameDto addPlayer(@PathVariable Integer id, @RequestBody NewPlayerParameter playerParameter) throws EntityNotFoundException, ValidationException {
         return this.gameManagementService.addPlayerToGame(id, playerParameter.getId());
     }
 

@@ -1,8 +1,6 @@
 package com.assignment.cardgame.models;
 
 import com.assignment.cardgame.common.Suit;
-import com.assignment.cardgame.repositories.PlayerRepository;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.xml.bind.ValidationException;
@@ -14,15 +12,15 @@ import java.util.stream.Collectors;
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
+    private int id;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name="gameDecks", joinColumns=@JoinColumn(name="game_id"))
-    List<Card> cards = new ArrayList();
+    private List<Card> cards = new ArrayList();
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name="players", joinColumns=@JoinColumn(name="game_id"))
-    Set<Player> playerList = new HashSet();
+    private Set<Player> playerList = new HashSet();
 
     public int getId() {
         return id;
@@ -110,7 +108,11 @@ public class Game {
         return playerValues;
     }
 
-    public void addPlayer(Player player) {
+    public void addPlayer(Player player) throws ValidationException {
+        if (this.isPlayerAlreadyPlaying(player.getId())){
+            throw new ValidationException("Cannot add a player twice to the same game");
+        }
+
         this.playerList.add(player);
     }
 
@@ -140,7 +142,7 @@ public class Game {
     }
 
     private Card MapCard(CardDescriptor card) {
-        return new Card(card.face, card.suit);
+        return new Card(card.getFace(), card.getSuit());
     }
 
     private void swapCards(int index1, int index2) {
@@ -157,6 +159,16 @@ public class Game {
         }
 
         throw new ValidationException("Unknown player with Id=" + playerId);
+    }
+
+    private boolean isPlayerAlreadyPlaying(int playerId) throws ValidationException {
+        for (Player player : this.playerList) {
+            if (player.getId() == playerId){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private PlayerValueDescriptor MapPlayerValue(Player player) {

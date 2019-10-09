@@ -4,9 +4,9 @@ import com.assignment.cardgame.common.Face;
 import com.assignment.cardgame.common.Suit;
 
 public class CardDescriptor {
-    Face face;
+    private Face face;
 
-    Suit suit;
+    private Suit suit;
 
     public CardDescriptor(Face face, Suit suit) {
         this.face = face;

@@ -67,7 +67,7 @@ public class GameManagementService {
         return this.MapGame(game);
     }
 
-    public GameDto addPlayerToGame(int gameId, int playerId) throws EntityNotFoundException {
+    public GameDto addPlayerToGame(int gameId, int playerId) throws EntityNotFoundException, ValidationException {
         Game game = getGame(gameId);
 
         Player player = this.playerRepository.save(new Player(playerId)); // Todo extract the player creation in a controller

@@ -22,6 +22,8 @@ public class GameTests {
 
     @Test
     public void testShuffleDeck() throws InterruptedException {
+        // Since the shuffle is based on a random number generator, this test might fail from time to time.
+
         Game game = new Game();
         List<CardDescriptor> cards = new Deck().getCards();
         game.addToGameDeck(cards);
@@ -33,11 +35,9 @@ public class GameTests {
         Assert.assertFalse(shuffledCards.get(2).toString().equalsIgnoreCase(cards.get(2).toString()));
         Assert.assertFalse(shuffledCards.get(cards.size() -1).toString().equalsIgnoreCase(cards.get(cards.size() -1).toString()));
 
-        // Force a new seed for the random number generator to avoid the test being flaky
-        Thread.sleep(1);
-
         game.shuffleGameDeck();
         List<CardDescriptor> veryShuffledCards = game.getGameDeck();
+
         Assert.assertFalse(veryShuffledCards.get(0).toString().equalsIgnoreCase(cards.get(0).toString()));
         Assert.assertFalse(veryShuffledCards.get(0).toString().equalsIgnoreCase(shuffledCards.get(0).toString()));
     }
@@ -52,11 +52,18 @@ public class GameTests {
     }
 
     @Test
-    public void testAddPlayer()  {
+    public void testAddPlayer() throws ValidationException {
         Game game = new Game();
         game.addPlayer(new Player(5));
         Assert.assertEquals(1, game.getPlayerList().size());
         Assert.assertEquals(5, game.getPlayerList().get(0).getId());
+    }
+
+    @Test(expected = ValidationException.class)
+    public void testAddPlayerWhenAlreadyExists() throws ValidationException {
+        Game game = new Game();
+        game.addPlayer(new Player(5));
+        game.addPlayer(new Player(5));
     }
 
     @Test

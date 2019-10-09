@@ -55,6 +55,6 @@ public class Player {
     }
 
     private Card MapCards(CardDescriptor card) {
-        return new Card(card.face, card.suit);
+        return new Card(card.getFace(), card.getSuit());
     }
 }

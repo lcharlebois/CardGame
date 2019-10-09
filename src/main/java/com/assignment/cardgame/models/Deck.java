@@ -11,7 +11,7 @@ public class Deck {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
+    private int id;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name="deckCards", joinColumns=@JoinColumn(name="deck_id"))
