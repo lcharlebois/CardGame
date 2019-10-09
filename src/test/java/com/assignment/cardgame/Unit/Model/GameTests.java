@@ -5,7 +5,9 @@ import com.assignment.cardgame.common.Suit;
 import com.assignment.cardgame.models.*;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
+import javax.xml.bind.ValidationException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,7 +23,7 @@ public class GameTests {
     @Test
     public void testShuffleDeck() throws InterruptedException {
         Game game = new Game();
-        List<CardDescriptor> cards = new Deck().GetCards();
+        List<CardDescriptor> cards = new Deck().getCards();
         game.addToGameDeck(cards);
 
         game.shuffleGameDeck();
@@ -31,6 +33,9 @@ public class GameTests {
         Assert.assertFalse(shuffledCards.get(2).toString().equalsIgnoreCase(cards.get(2).toString()));
         Assert.assertFalse(shuffledCards.get(cards.size() -1).toString().equalsIgnoreCase(cards.get(cards.size() -1).toString()));
 
+        // Force a new seed for the random number generator to avoid the test being flaky
+        Thread.sleep(1);
+
         game.shuffleGameDeck();
         List<CardDescriptor> veryShuffledCards = game.getGameDeck();
         Assert.assertFalse(veryShuffledCards.get(0).toString().equalsIgnoreCase(cards.get(0).toString()));
@@ -38,12 +43,28 @@ public class GameTests {
     }
 
     @Test
-    public void testAddCards() throws InterruptedException {
+    public void testAddCards()  {
         Game game = new Game();
-        List<CardDescriptor> cards = new Deck().GetCards();
+        List<CardDescriptor> cards = new Deck().getCards();
         Assert.assertEquals(0, game.getGameDeck().size());
         game.addToGameDeck(cards);
         Assert.assertEquals(cards.size(), game.getGameDeck().size());
+    }
+
+    @Test
+    public void testAddPlayer()  {
+        Game game = new Game();
+        game.addPlayer(new Player(5));
+        Assert.assertEquals(1, game.getPlayerList().size());
+        Assert.assertEquals(5, game.getPlayerList().get(0).getId());
+    }
+
+    @Test
+    public void testRemovePlayer() throws ValidationException {
+        Game game = new Game();
+        game.addPlayer(new Player(5));
+        game.removePlayer(5);
+        Assert.assertEquals(0, game.getPlayerList().size());
     }
 
     @Test
@@ -122,6 +143,49 @@ public class GameTests {
         ValidateOrder(sortedCardCount, 5, Suit.CLUBS, Face.NINE, 3);
         ValidateOrder(sortedCardCount, 6, Suit.DIAMONDS, Face.KING, 1);
         ValidateOrder(sortedCardCount, 7, Suit.DIAMONDS, Face.QUEEN, 1);
+    }
+
+    @Test()
+    public void testDealCardToPlayer() throws ValidationException {
+        Game game = new Game();
+        CardDescriptor card1 = new CardDescriptor(Face.ACE, Suit.SPADES);
+        CardDescriptor card2 = new CardDescriptor(Face.TWO, Suit.SPADES);
+        CardDescriptor card3 = new CardDescriptor(Face.JACK, Suit.HEARTS);
+
+        game.addToGameDeck(Arrays.asList(card1, card2, card3));
+
+        game.addPlayer(new Player(4));
+        game.dealCardToPlayer(4, 2);
+
+        Assert.assertEquals(1, game.getGameDeck().size());
+        Assert.assertEquals(4, game.getPlayerList().get(0).getId());
+        Assert.assertEquals(2, game.getPlayerList().get(0).getCards().size());
+    }
+
+    @Test()
+    public void testNoMoreCardToDealToPlayer() throws ValidationException {
+        Game game = new Game();
+        CardDescriptor card1 = new CardDescriptor(Face.ACE, Suit.SPADES);
+
+        game.addToGameDeck(Arrays.asList(card1));
+
+        game.addPlayer(new Player(4));
+        game.dealCardToPlayer(4, 2);
+
+        Assert.assertEquals(0, game.getGameDeck().size());
+        Assert.assertEquals(4, game.getPlayerList().get(0).getId());
+        Assert.assertEquals(1, game.getPlayerList().get(0).getCards().size());
+    }
+
+    @Test(expected = ValidationException.class)
+    public void testDealCardToPlayerNotFound() throws ValidationException {
+        Game game = new Game();
+        CardDescriptor card1 = new CardDescriptor(Face.ACE, Suit.SPADES);
+        CardDescriptor card2 = new CardDescriptor(Face.TWO, Suit.SPADES);
+
+        game.addToGameDeck(Arrays.asList(card1, card2));
+
+        game.dealCardToPlayer(4, 2);
     }
 
     private void ValidateOrder(List<CardCount> sortedCardCount, int index, Suit suit, Face face, int count) {

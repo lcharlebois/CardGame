@@ -3,10 +3,8 @@ package com.assignment.cardgame.services;
 import com.assignment.cardgame.models.*;
 import com.assignment.cardgame.repositories.DeckRepository;
 import com.assignment.cardgame.repositories.GameRepository;
-import com.assignment.cardgame.services.Dtos.CardDto;
-import com.assignment.cardgame.services.Dtos.DeckDto;
-import com.assignment.cardgame.services.Dtos.GameDto;
-import com.assignment.cardgame.services.Dtos.PlayerDto;
+import com.assignment.cardgame.repositories.PlayerRepository;
+import com.assignment.cardgame.services.Dtos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +21,9 @@ public class GameManagementService {
 
     @Autowired
     DeckRepository deckRepository;
+
+    @Autowired
+    PlayerRepository playerRepository;
 
     public GameDto createGame(){
         Game game = gameRepository.save(new Game());
@@ -45,11 +46,11 @@ public class GameManagementService {
         throw new EntityNotFoundException("Game with id=" + gameId + " was not found.");
     }
 
-    public GameDto AddDeckToGame(int gameId, int deckId) throws EntityNotFoundException {
+    public GameDto addDeckToGame(int gameId, int deckId) throws EntityNotFoundException {
         Game game = getGame(gameId);
         Deck deck = getDeck(deckId);
 
-        List<CardDescriptor> cards = deck.GetCards();
+        List<CardDescriptor> cards = deck.getCards();
         game.addToGameDeck(cards);
 
         this.gameRepository.save(game);
@@ -58,31 +59,81 @@ public class GameManagementService {
         return this.MapGame(game);
     }
 
-    public GameDto AddPlayerToGame(int gameId, int playerId) throws EntityNotFoundException, ValidationException {
+    public GameDto shuffleGameDeck(int gameId) throws EntityNotFoundException {
+        Game game = getGame(gameId);
+        game.shuffleGameDeck();
+        this.gameRepository.save(game);
+
+        return this.MapGame(game);
+    }
+
+    public GameDto addPlayerToGame(int gameId, int playerId) throws EntityNotFoundException {
         Game game = getGame(gameId);
 
-        game.addPlayer(playerId);
+        Player player = this.playerRepository.save(new Player(playerId)); // Todo extract the player creation in a controller
+
+        game.addPlayer(player);
 
         this.gameRepository.save(game);
 
         return this.MapGame(game);
     }
-//
-//    public GameDto DealCardToPlayer(int gameId, int playerId) throws EntityNotFoundException, ValidationException {
-//        Game game = getGame(gameId);
-//
-//        game.addPlayer(playerId);
-//
-//        this.gameRepository.save(game);
-//
-//        return this.MapGame(game);
-//    }
+
+    public GameDto removePlayerFromGame(int gameId, int playerId) throws EntityNotFoundException, ValidationException {
+        Game game = getGame(gameId);
+        game.removePlayer(playerId);
+
+        this.gameRepository.save(game);
+
+        return this.MapGame(game);
+    }
+
+    public GameDto dealCardToPlayer(int gameId, int playerId, int numberOfCards) throws EntityNotFoundException, ValidationException {
+        Game game = getGame(gameId);
+        game.dealCardToPlayer(playerId, numberOfCards);
+        this.gameRepository.save(game);
+
+        return this.MapGame(game);
+    }
+
+    public List<CardDto> getPlayerCards(int gameId, int playerId) throws EntityNotFoundException, ValidationException {
+        Game game = getGame(gameId);
+        PlayerDescriptor player = game.getPlayer(playerId);
+
+        return this.MapPlayer(player).getCards();
+    }
+
+    public List<PlayerValueDto> getPlayerValues(int gameId) throws EntityNotFoundException {
+        Game game = getGame(gameId);
+
+        List<PlayerValueDto> playerValues = game.getSortedPlayerValues().stream()
+                .map(x -> this.MapPlayerValue(x))
+                .collect(Collectors.toList());
+
+        return playerValues;
+    }
+
+    public CardsPerSuitDto getCardsPerSuits(int gameId) throws EntityNotFoundException {
+        Game game = getGame(gameId);
+        SuitCounts suitCounts = game.getSuitCounts();
+        return this.MapSuitCounts(suitCounts);
+    }
+
+    public List<CardCountDto> getSortedCardCount(int gameId) throws EntityNotFoundException {
+        Game game = getGame(gameId);
+        List<CardCountDto> cardCounts = game.getSortedCardCount().stream()
+                .map(x -> this.MapCardCount(x))
+                .collect(Collectors.toList());
+
+        return cardCounts;
+    }
 
     private Game getGame(int gameId) throws EntityNotFoundException {
-        Optional<Game> game = gameRepository.findById(gameId);
+        Optional<Game> gameOptional = gameRepository.findById(gameId);
 
-        if (game.isPresent()){
-            return game.get();
+        if (gameOptional.isPresent()){
+            Game game = gameOptional.get();
+            return game;
         }
 
         throw new EntityNotFoundException("Game with id=" + gameId + " was not found.");
@@ -120,5 +171,21 @@ public class GameManagementService {
                 .collect(Collectors.toList());
 
         return new PlayerDto(playerDescriptor.getId(), cards);
+    }
+
+    private PlayerValueDto MapPlayerValue(PlayerValueDescriptor playerValueDescriptor) {
+        return new PlayerValueDto(playerValueDescriptor.getPlayerId(), playerValueDescriptor.getPlayerValue());
+    }
+
+    private CardsPerSuitDto MapSuitCounts(SuitCounts suitCounts) {
+        return new CardsPerSuitDto(
+                suitCounts.getHeartsCount(),
+                suitCounts.getSpadesCount(),
+                suitCounts.getClubsCount(),
+                suitCounts.getDiamondsCount());
+    }
+
+    private CardCountDto MapCardCount(CardCount cardCount) {
+        return new CardCountDto(this.MapCard(cardCount.getCard()), cardCount.getCount());
     }
 }

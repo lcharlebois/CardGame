@@ -12,6 +12,10 @@ public class CardCount {
         this.card = card;
     }
 
+    public CardDescriptor getCard() {
+        return card;
+    }
+
     public int getCount() {
         return count;
     }

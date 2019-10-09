@@ -15,13 +15,13 @@ public class DeckTests {
     public void testCreateDeck(){
         Deck deck = new Deck();
         Assert.assertEquals(0, deck.getId());
-        Assert.assertEquals(52, deck.GetCards().size());
+        Assert.assertEquals(52, deck.getCards().size());
     }
 
     @Test
     public void testGetCards(){
         Deck deck = new Deck();
-        List<CardDescriptor> cards = deck.GetCards();
+        List<CardDescriptor> cards = deck.getCards();
 
         Assert.assertEquals(52, cards.size());
         for (Suit suit  : EnumSet.allOf(Suit.class)) {

@@ -3,21 +3,17 @@ package com.assignment.cardgame.models;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Entity
 public class Player {
+
     @Id
     private int id;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name="playerCard", joinColumns=@JoinColumn(name="player_id"))
-    private List<Card> Cards = new ArrayList();
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="gameId")
-    private Game game;
+    @CollectionTable(name="playerCards", joinColumns=@JoinColumn(name="player_id"))
+    private List<Card> cards = new ArrayList();
 
     public Player(int id) {
         this.id = id;
@@ -31,19 +27,23 @@ public class Player {
     }
 
     public List<CardDescriptor> getPlayerCards() {
-        return this.Cards.stream()
+        return this.cards.stream()
                 .map(x -> this.MapCards(x))
                 .collect(Collectors.toList());
     }
 
     public void addCard(CardDescriptor cardDescriptor) {
         Card card = this.MapCards(cardDescriptor);
-        Cards.add(card);
+        cards.add(card);
+    }
+
+    public void addCards(List<Card> cards) {
+        this.cards.addAll(cards);
     }
 
     public int GetCardsValue(){
         int cardsValue = 0;
-        for (Card card : this.Cards) {
+        for (Card card : this.cards) {
             cardsValue += (card.face.getValue() + 1);
         }
 

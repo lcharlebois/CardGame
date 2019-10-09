@@ -28,7 +28,6 @@ public class GameControllerTests {
         Assert.assertNotNull(game);
     }
 
-
     @Test
     public void testGetGames(){
         // Given
@@ -43,22 +42,6 @@ public class GameControllerTests {
         Assert.assertTrue(exists(games, createdGame1.id));
         Assert.assertTrue(exists(games, createdGame2.id));
     }
-
-//
-//    @Test
-//    public void testDealCardDeck(){ // todo fix it
-//        // Given
-//        GameDto createdGame = gameController.create();
-//
-//        // When
-//        String card = (String)gameController(createdGame.id).getBody();
-//
-//        // Then
-//        DeckDto deck = (DeckDto)gameController.get(createdGame.id).getBody();
-//        Assert.assertEquals(51, deck.Cards.size());
-//        Assert.assertNotNull(card);
-//        Assert.assertNotNull(card);
-//    }
 
     @Test
     public void testDeleteGame() throws EntityNotFoundException {

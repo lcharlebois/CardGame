@@ -1,5 +1,8 @@
 package com.assignment.cardgame.Unit.Services;
 
+import com.assignment.cardgame.common.Face;
+import com.assignment.cardgame.common.Suit;
+import com.assignment.cardgame.models.CardDescriptor;
 import com.assignment.cardgame.models.Deck;
 import com.assignment.cardgame.models.Game;
 import com.assignment.cardgame.repositories.DeckRepository;
@@ -66,8 +69,8 @@ public class GameManagementServiceTests {
         Mockito.when(deckRepository.findById(deck.getId())).thenReturn(Optional.of(deck));
         Mockito.when(gameRepository.findById(game.getId())).thenReturn(Optional.of(game));
 
-        GameDto gameDto = this.gameManagementService.AddDeckToGame(game.getId(), deck.getId());
-        Assert.assertEquals(gameDto.cards.size(), deck.GetCards().size());
+        GameDto gameDto = this.gameManagementService.addDeckToGame(game.getId(), deck.getId());
+        Assert.assertEquals(gameDto.cards.size(), deck.getCards().size());
     }
 
     @Test()
@@ -76,8 +79,23 @@ public class GameManagementServiceTests {
 
         Mockito.when(gameRepository.findById(game.getId())).thenReturn(Optional.of(game));
 
-        GameDto gameDto = this.gameManagementService.AddPlayerToGame(game.getId(), 1);
-        Assert.assertEquals(gameDto.players.size(), 1);
-        Assert.assertEquals(gameDto.players.get(0).getId(), 1);
+        GameDto gameDto = this.gameManagementService.addPlayerToGame(game.getId(), 1);
+        Assert.assertEquals(1, gameDto.players.size());
+        Assert.assertEquals(1, gameDto.players.get(0).getId());
+    }
+
+    @Test()
+    public void testDealCardToPlayer() throws EntityNotFoundException, ValidationException {
+        Game game = new Game();
+        int playerId = 1;
+        game.addToGameDeck(Arrays.asList(new CardDescriptor(Face.EIGHT, Suit.HEARTS)));
+        Mockito.when(gameRepository.findById(game.getId())).thenReturn(Optional.of(game));
+
+        this.gameManagementService.addPlayerToGame(game.getId(), playerId);
+        this.gameManagementService.dealCardToPlayer(game.getId(), playerId, 2);
+
+        Assert.assertEquals(0, game.getGameDeck().size());
+        Assert.assertEquals(Face.EIGHT, game.getPlayerList().get(0).getCards().get(0).getFace());
+        Assert.assertEquals(Suit.HEARTS, game.getPlayerList().get(0).getCards().get(0).getSuit());
     }
 }

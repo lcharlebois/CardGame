@@ -54,7 +54,7 @@ public class DeckController {
     }
 
     private DeckDto MapDeck(Deck deck) {
-        List<String> cards = deck.GetCards().stream().map(x -> x.toString()).collect(Collectors.toList());
+        List<String> cards = deck.getCards().stream().map(x -> x.toString()).collect(Collectors.toList());
         return new DeckDto(deck.getId(), cards);
     }
 }

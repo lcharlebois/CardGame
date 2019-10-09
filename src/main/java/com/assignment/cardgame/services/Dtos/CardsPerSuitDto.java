@@ -1,12 +1,15 @@
-package com.assignment.cardgame.models;
+package com.assignment.cardgame.services.Dtos;
 
-public class SuitCounts {
+public class CardsPerSuitDto {
     private int heartsCount;
     private int spadesCount;
     private int clubsCount;
     private int diamondsCount;
 
-    public SuitCounts(int heartsCount, int spadesCount, int clubsCount, int diamondsCount) {
+    public CardsPerSuitDto() {
+    }
+
+    public CardsPerSuitDto(int heartsCount, int spadesCount, int clubsCount, int diamondsCount) {
         this.heartsCount = heartsCount;
         this.spadesCount = spadesCount;
         this.clubsCount = clubsCount;

@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate;
 
 public class DeckControllerTests {
 
-    @Test
+    @Test // Requirement 2
     public void testCreateDeck(){
         // Given
         RestTemplate restTemplate = new RestTemplate();

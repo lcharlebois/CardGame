@@ -1,12 +1,8 @@
 package com.assignment.cardgame.models;
 
-import com.assignment.cardgame.common.Face;
-import com.assignment.cardgame.common.Suit;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,41 +15,31 @@ public class Deck {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name="deckCards", joinColumns=@JoinColumn(name="deck_id"))
-    List<Integer> Cards;
-
-    Optional<Integer> GameId;
+    List<Integer> cards;
 
     public Deck() {
-        Cards = BuildCards(52);
+        cards = buildCards(52);
     }
 
     public int getId() {
         return id;
     }
 
-    public List<CardDescriptor> GetCards(){
+    public List<CardDescriptor> getCards(){
         List<CardDescriptor> cards = new ArrayList();
-        for (int cardValue : this.Cards) {
-            CardDescriptor card = BuildCard(cardValue);
+        for (int cardValue : this.cards) {
+            CardDescriptor card = buildCard(cardValue);
             cards.add(card);
         }
 
         return cards;
     }
 
-    public Optional<Integer> getGameId() {
-        return GameId;
-    }
-
-    public void setGameId(int gameId) {
-        GameId = Optional.of(gameId);
-    }
-
-    private List<Integer> BuildCards(int cardCount) {
+    private List<Integer> buildCards(int cardCount) {
         return Stream.iterate(0, x -> x + 1).limit(cardCount).collect(Collectors.toList());
     }
 
-    private CardDescriptor BuildCard(int cardValue) {
+    private CardDescriptor buildCard(int cardValue) {
         Card card = Card.fromCardValue(cardValue);
 
         return new CardDescriptor(card.face, card.suit);

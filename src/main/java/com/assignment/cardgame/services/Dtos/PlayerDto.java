@@ -1,7 +1,5 @@
 package com.assignment.cardgame.services.Dtos;
 
-import com.assignment.cardgame.models.CardDescriptor;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,11 +7,11 @@ public class PlayerDto {
 
     int id;
 
-    List<CardDto> Cards = new ArrayList();
+    List<CardDto> cards = new ArrayList();
 
     public PlayerDto(int id, List<CardDto> cards) {
         this.id = id;
-        Cards = cards;
+        this.cards = cards;
     }
 
     protected PlayerDto() {
@@ -24,6 +22,6 @@ public class PlayerDto {
     }
 
     public List<CardDto> getCards() {
-        return Cards;
+        return cards;
     }
 }

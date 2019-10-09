@@ -1,6 +1,8 @@
 package com.assignment.cardgame.models;
 
 import com.assignment.cardgame.common.Suit;
+import com.assignment.cardgame.repositories.PlayerRepository;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.xml.bind.ValidationException;
@@ -14,12 +16,13 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.AUTO)
     int id;
 
-    @ElementCollection()
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name="gameDecks", joinColumns=@JoinColumn(name="game_id"))
     List<Card> cards = new ArrayList();
 
-    @OneToMany(targetEntity = Player.class, mappedBy = "game", fetch = FetchType.EAGER)
-    List<Player> playerList = new ArrayList();
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name="players", joinColumns=@JoinColumn(name="game_id"))
+    Set<Player> playerList = new HashSet();
 
     public int getId() {
         return id;
@@ -90,19 +93,37 @@ public class Game {
                 .collect(Collectors.toList());
     }
 
-    public void addPlayer(int playerId) throws ValidationException {
-        if (this.playerList.stream()
-                .filter(o -> o.getId() == playerId)
-                .findFirst()
-                .isPresent()){
+    public List<PlayerValueDescriptor> getSortedPlayerValues() {
+        List<PlayerValueDescriptor> playerValues = this.playerList.stream()
+                .map(x -> this.MapPlayerValue(x))
+                .collect(Collectors.toList());
 
-            throw new ValidationException("Cannot add a player with id="
-                    + playerId
-                    + " is already in the game with id="
-                    + this.id);
-        }
+        Comparator<PlayerValueDescriptor> comparator = Comparator.comparing(PlayerValueDescriptor::getPlayerValue).reversed();
 
-        this.playerList.add(new Player(playerId));
+        Collections.sort(playerValues, comparator);
+
+        return playerValues;
+    }
+
+    public void addPlayer(Player player) {
+        this.playerList.add(player);
+    }
+
+    public void removePlayer(int playerId) throws ValidationException {
+        Player player = this.findPlayer(playerId);
+        this.playerList.remove(player);
+    }
+
+    public void dealCardToPlayer(int playerId, int numberOfCard) throws ValidationException {
+        Player player = this.findPlayer(playerId);
+
+        List<Card> cards = this.cards.stream().limit(numberOfCard).collect(Collectors.toList());
+        player.addCards(cards);
+        this.cards.removeAll(cards);
+    }
+
+    public PlayerDescriptor getPlayer(int playerId) throws ValidationException {
+        return this.MapPlayer(this.findPlayer(playerId));
     }
 
     private PlayerDescriptor MapPlayer(Player player) {
@@ -121,5 +142,19 @@ public class Game {
         Card temp = this.cards.get(index2);
         this.cards.set(index2, this.cards.get(index1));
         this.cards.set(index1, temp);
+    }
+
+    private Player findPlayer(int playerId) throws ValidationException {
+        for (Player player : this.playerList) {
+            if (player.getId() == playerId){
+                return player;
+            }
+        }
+
+        throw new ValidationException("Unknown player with Id=" + playerId);
+    }
+
+    private PlayerValueDescriptor MapPlayerValue(Player player) {
+        return new PlayerValueDescriptor(player.getId(), player.GetCardsValue());
     }
 }
